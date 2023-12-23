@@ -4,5 +4,5 @@ COPY . /app
 WORKDIR /app
 RUN pip install Flask==2.3.2
 EXPOSE 8080
-ENTRYPOINT ["python"]
+ENTRYPOINT ["python3"]
 CMD ["src/app.py"]
