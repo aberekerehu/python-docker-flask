@@ -4,12 +4,12 @@ Basic Python Flask app in Docker which prints the hostname and IP of the contain
 ### Build application
 Build the Docker image manually by cloning the Git repo.
 ```
-$ git clone https://github.com/lvthillo/python-flask-docker.git
-$ docker build -t lvthillo/python-flask-docker .
+$ git clone [https://github.com/lvthillo/python-flask-docker.git](https://github.com/aberekerehu/python-docker-flask.git)
+$ docker build -t akerehu/python-docker-flask .
 ```
 
 ### Download precreated image
-You can also just download the existing image from [DockerHub](https://hub.docker.com/r/lvthillo/python-flask-docker/).
+You can also just download the existing image from [DockerHub](https://github.com/aberekerehu/python-docker-flask.git/).
 ```
 docker pull lvthillo/python-flask-docker
 ```
