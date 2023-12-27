@@ -1,1 +1,69 @@
 flask=2.3.2
+pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
+
+
+pipeline {
+    agent any
+
+    environment {
+        PYTHON_VERSION = '3.8'  // Adjust the Python version as needed
+        GOOGLE_DRIVE_FOLDER_ID = 'your_folder_id'  // Replace with your Google Drive folder ID
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Set Up Python') {
+            steps {
+                script {
+                    // Set up a virtual environment
+                    sh "python${PYTHON_VERSION} -m venv venv"
+                    // Activate the virtual environment
+                    sh "source venv/bin/activate"
+                    // Install dependencies
+                    sh "pip install -r requirements.txt"
+                }
+            }
+        }
+
+        stage('Build and Test') {
+            steps {
+                script {
+                    // Run your Python tests
+                    sh "python -m unittest discover -s tests -p '*_test.py'"
+                }
+            }
+        }
+
+        stage('Upload Artifacts to Google Drive') {
+            steps {
+                script {
+                    // Compress artifacts into a zip file
+                    sh "zip -r artifacts.zip ."
+
+                    // Upload the zip file to Google Drive
+                    withCredentials([string(credentialsId: 'google-drive-token', variable: 'GOOGLE_DRIVE_TOKEN')]) {
+                        sh """
+                            python upload_to_google_drive.py \
+                                --file artifacts.zip \
+                                --folder-id ${GOOGLE_DRIVE_FOLDER_ID} \
+                                --token "${GOOGLE_DRIVE_TOKEN}"
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Deactivate the virtual environment
+            sh "deactivate || true"
+        }
+    }
+}
+
